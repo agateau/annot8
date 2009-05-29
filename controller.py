@@ -20,6 +20,8 @@ class Controller(QObject):
         self.scene.addItem(self.pixmapItem)
 
         QObject.connect(self.ui.actionOpen, SIGNAL("triggered()"), self.open)
+        QObject.connect(self.ui.actionSave, SIGNAL("triggered()"), self.save)
+
         QObject.connect(self.ui.actionBubble, SIGNAL("triggered()"), self.addBubble)
 
         self.window.resize(700, 500)
@@ -34,6 +36,25 @@ class Controller(QObject):
         if name.isEmpty():
             return
         self.load(name)
+
+
+    def save(self):
+        name = QFileDialog.getSaveFileName(self.window, self.tr("Save Image as"))
+        if name.isEmpty():
+            return
+
+        image = self.imageFromScene()
+        image.save(name, "PNG")
+
+
+    def imageFromScene(self):
+        rect = self.scene.itemsBoundingRect()
+        image = QImage(int(rect.width()), int(rect.height()), QImage.Format_ARGB32)
+        image.fill(Qt.transparent)
+        painter = QPainter(image)
+        self.scene.render(painter, rect, rect)
+        painter.end()
+        return image
 
 
     def load(self, fileName):
