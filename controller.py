@@ -19,14 +19,21 @@ class Controller(QObject):
         self.pixmapItem.setZValue(-1)
         self.scene.addItem(self.pixmapItem)
 
-        QObject.connect(self.ui.actionBubble, SIGNAL("triggered()"), \
-            self.addBubble)
+        QObject.connect(self.ui.actionOpen, SIGNAL("triggered()"), self.open)
+        QObject.connect(self.ui.actionBubble, SIGNAL("triggered()"), self.addBubble)
 
         self.window.resize(700, 500)
 
 
     def show(self):
         self.window.show()
+
+
+    def open(self):
+        name = QFileDialog.getOpenFileName(self.window, self.tr("Open Image"))
+        if name.isEmpty():
+            return
+        self.load(name)
 
 
     def load(self, fileName):
@@ -42,4 +49,4 @@ class Controller(QObject):
         self.scene.addItem(bubble)
 
 
-# vi: ts=4 sw=4 et
+# vi: ts=4 sw=4 et tw=0
