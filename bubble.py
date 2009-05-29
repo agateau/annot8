@@ -1,11 +1,11 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-MARGIN = 10
+MARGIN = 10.5
 
-class Bubble(QGraphicsEllipseItem):
+class Bubble(QGraphicsPathItem):
     def __init__(self, text):
-        QGraphicsEllipseItem.__init__(self)
+        QGraphicsPathItem.__init__(self)
         self.setFlag(QGraphicsItem.ItemIsMovable)
 
         self.setBrush(QColor.fromHsvF(0, 0, 1., .6))
@@ -20,6 +20,14 @@ class Bubble(QGraphicsEllipseItem):
         self.text.adjustSize()
         rect = QRectF(QPointF(0, 0), self.text.document().size())
         rect.adjust(-MARGIN, -MARGIN, MARGIN, MARGIN)
-        self.setRect(rect)
+        path = QPainterPath()
+        path.addRect(rect)
+
+        x = rect.left() + 5
+        y = rect.bottom()
+        anchor = QPolygonF([QPointF(x, y), QPointF(x, y + 20), QPointF(x + 20, y)])
+
+        path.addPolygon(anchor)
+        self.setPath(path.simplified())
 
 # vi: ts=4 sw=4 et
