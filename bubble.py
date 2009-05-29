@@ -1,6 +1,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+OPACITY = 0.8
 MARGIN = 10.5
 
 class Bubble(QGraphicsPathItem):
@@ -8,7 +9,7 @@ class Bubble(QGraphicsPathItem):
         QGraphicsPathItem.__init__(self)
         self.setFlag(QGraphicsItem.ItemIsMovable)
 
-        self.setBrush(QColor.fromHsvF(0, 0, 1., .6))
+        self.setBrush(QColor.fromHsvF(0, 0, 1., OPACITY))
 
         self.text = QGraphicsTextItem(self)
         self.text.setTextInteractionFlags(Qt.TextEditorInteraction)
