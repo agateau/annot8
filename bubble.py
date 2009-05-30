@@ -8,6 +8,7 @@ class Bubble(QGraphicsPathItem):
     def __init__(self, text):
         QGraphicsPathItem.__init__(self)
         self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
 
         self.setBrush(QColor.fromHsvF(0, 0, 1., OPACITY))
 

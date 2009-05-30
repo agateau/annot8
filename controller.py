@@ -28,9 +28,12 @@ class Controller(QObject):
         QObject.connect(self.ui.actionOpen, SIGNAL("triggered()"), self.open)
         QObject.connect(self.ui.actionSave, SIGNAL("triggered()"), self.save)
 
+        QObject.connect(self.ui.actionDelete, SIGNAL("triggered()"), self.deleteItems)
+
         QObject.connect(self.ui.actionBubble, SIGNAL("triggered()"), self.addBubble)
 
         self.window.resize(700, 500)
+
 
 
     def slotDragStarted(self):
@@ -85,4 +88,7 @@ class Controller(QObject):
         self.scene.addItem(bubble)
 
 
+    def deleteItems(self):
+        for item in self.scene.selectedItems():
+            self.scene.removeItem(item)
 # vi: ts=4 sw=4 et tw=0
