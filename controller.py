@@ -2,6 +2,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from ui_mainwindow import Ui_MainWindow
+from dragwidget import DragWidget
 from bubble import Bubble
 
 class Controller(QObject):
@@ -11,6 +12,11 @@ class Controller(QObject):
         self.window = QMainWindow()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self.window)
+
+        dragMeWidget = DragWidget(self.tr("Drag Me"), self.window)
+        self.ui.mainToolBar.addWidget(dragMeWidget)
+
+        QObject.connect(dragMeWidget, SIGNAL("dragStarted()"), self.slotDragStarted)
 
         self.scene = QGraphicsScene()
         self.ui.view.setScene(self.scene)
@@ -25,6 +31,15 @@ class Controller(QObject):
         QObject.connect(self.ui.actionBubble, SIGNAL("triggered()"), self.addBubble)
 
         self.window.resize(700, 500)
+
+
+    def slotDragStarted(self):
+        drag = QDrag(self.window)
+        mimeData = QMimeData()
+        variant = QVariant(self.imageFromScene())
+        mimeData.setImageData(variant)
+        drag.setMimeData(mimeData)
+        drag.start()
 
 
     def show(self):

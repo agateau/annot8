@@ -36,7 +36,7 @@
    </attribute>
    <addaction name="actionBubble"/>
   </widget>
-  <widget class="QToolBar" name="toolBar_2">
+  <widget class="QToolBar" name="mainToolBar">
    <property name="windowTitle">
     <string>toolBar_2</string>
    </property>
