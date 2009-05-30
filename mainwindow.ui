@@ -35,6 +35,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionBubble"/>
+   <addaction name="actionLine"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="windowTitle">
@@ -113,6 +114,11 @@
    </property>
    <property name="shortcut">
     <string>Del</string>
+   </property>
+  </action>
+  <action name="actionLine">
+   <property name="text">
+    <string>Line</string>
    </property>
   </action>
  </widget>

@@ -4,6 +4,7 @@ from PyQt4.QtGui import *
 from ui_mainwindow import Ui_MainWindow
 from dragwidget import DragWidget
 from bubble import Bubble
+from line import Line
 
 class Controller(QObject):
     def __init__(self):
@@ -31,6 +32,7 @@ class Controller(QObject):
         QObject.connect(self.ui.actionDelete, SIGNAL("triggered()"), self.deleteItems)
 
         QObject.connect(self.ui.actionBubble, SIGNAL("triggered()"), self.addBubble)
+        QObject.connect(self.ui.actionLine, SIGNAL("triggered()"), self.addLine)
 
         self.window.resize(700, 500)
 
@@ -83,9 +85,17 @@ class Controller(QObject):
 
     def addBubble(self):
         bubble = Bubble("A Bubble")
+        self.addItem(bubble)
+
+
+    def addLine(self):
+        self.addItem(Line())
+
+
+    def addItem(self, item):
         rect = self.pixmapItem.boundingRect()
-        bubble.setPos(rect.width() / 2, rect.height() / 2)
-        self.scene.addItem(bubble)
+        item.setPos(rect.width() / 2, rect.height() / 2)
+        self.scene.addItem(item)
 
 
     def deleteItems(self):
