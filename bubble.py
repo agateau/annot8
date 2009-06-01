@@ -1,11 +1,13 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from scene import SceneTool
+
 OPACITY = 0.8
 MARGIN = 10.5
 
 class Bubble(QGraphicsPathItem):
-    def __init__(self, text):
+    def __init__(self):
         QGraphicsPathItem.__init__(self)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
@@ -16,7 +18,7 @@ class Bubble(QGraphicsPathItem):
         self.text.setTextInteractionFlags(Qt.TextEditorInteraction)
         QObject.connect(self.text.document(), SIGNAL("contentsChanged()"), \
             self.adjustSizeFromText)
-        self.text.setPlainText(text)
+        self.text.setPlainText("")
 
     def adjustSizeFromText(self):
         self.text.adjustSize()
@@ -32,4 +34,16 @@ class Bubble(QGraphicsPathItem):
         path.addPolygon(anchor)
         self.setPath(path.simplified())
 
+
+class AddBubbleTool(SceneTool):
+    def mousePressEvent(self, event):
+        item = self.scene.itemAt(event.scenePos())
+        if isinstance(item, Bubble):
+            return False
+
+        bubble = Bubble()
+        self.scene.addItem(bubble)
+        bubble.setPos(event.scenePos())
+        bubble.text.setFocus()
+        return True
 # vi: ts=4 sw=4 et

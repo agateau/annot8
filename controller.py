@@ -3,8 +3,9 @@ from PyQt4.QtGui import *
 
 from ui_mainwindow import Ui_MainWindow
 from dragwidget import DragWidget
-from bubble import Bubble
-from line import Line
+from scene import Scene
+from bubble import AddBubbleTool
+from line import AddLineTool
 
 class Controller(QObject):
     def __init__(self):
@@ -19,7 +20,7 @@ class Controller(QObject):
 
         QObject.connect(dragMeWidget, SIGNAL("dragStarted()"), self.slotDragStarted)
 
-        self.scene = QGraphicsScene()
+        self.scene = Scene()
         self.ui.view.setScene(self.scene)
 
         self.pixmapItem = QGraphicsPixmapItem()
@@ -31,11 +32,13 @@ class Controller(QObject):
 
         QObject.connect(self.ui.actionDelete, SIGNAL("triggered()"), self.deleteItems)
 
-        QObject.connect(self.ui.actionBubble, SIGNAL("triggered()"), self.addBubble)
-        QObject.connect(self.ui.actionLine, SIGNAL("triggered()"), self.addLine)
+        self.toolGroup = QActionGroup(self)
+        self.toolGroup.addAction(self.ui.actionSelect)
+        self.toolGroup.addAction(self.ui.actionBubble)
+        self.toolGroup.addAction(self.ui.actionLine)
+        QObject.connect(self.toolGroup, SIGNAL("triggered(QAction*)"), self.slotToolChanged)
 
         self.window.resize(700, 500)
-
 
 
     def slotDragStarted(self):
@@ -83,19 +86,18 @@ class Controller(QObject):
         self.scene.setSceneRect(QRectF(pix.rect()))
 
 
-    def addBubble(self):
-        bubble = Bubble("A Bubble")
-        self.addItem(bubble)
+    def slotToolChanged(self, action):
+        toolFromAction = {
+            self.ui.actionBubble: AddBubbleTool,
+            self.ui.actionLine: AddLineTool,
+            }
 
-
-    def addLine(self):
-        self.addItem(Line())
-
-
-    def addItem(self, item):
-        rect = self.pixmapItem.boundingRect()
-        item.setPos(rect.width() / 2, rect.height() / 2)
-        self.scene.addItem(item)
+        klass = toolFromAction.get(action)
+        if klass:
+            tool = klass(self.scene)
+        else:
+            tool = None
+        self.scene.setTool(tool)
 
 
     def deleteItems(self):

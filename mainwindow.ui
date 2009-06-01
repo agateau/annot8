@@ -34,6 +34,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionSelect"/>
    <addaction name="actionBubble"/>
    <addaction name="actionLine"/>
   </widget>
@@ -79,14 +80,6 @@
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
   </widget>
-  <action name="actionBubble">
-   <property name="text">
-    <string>Bubble</string>
-   </property>
-   <property name="toolTip">
-    <string>Add a Bubble</string>
-   </property>
-  </action>
   <action name="actionOpen">
    <property name="text">
     <string>Open</string>
@@ -117,8 +110,33 @@
    </property>
   </action>
   <action name="actionLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Line</string>
+   </property>
+  </action>
+  <action name="actionBubble">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Bubble</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a Bubble</string>
+   </property>
+  </action>
+  <action name="actionSelect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Select</string>
    </property>
   </action>
  </widget>

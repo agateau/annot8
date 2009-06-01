@@ -1,6 +1,8 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from scene import SceneTool
+
 HANDLE_RADIUS = 5
 
 
@@ -41,4 +43,16 @@ class Line(QGraphicsItem):
         if event.type() == QEvent.GraphicsSceneMouseMove:
             self.prepareGeometryChange()
         return False
+
+
+class AddLineTool(SceneTool):
+    def mousePressEvent(self, event):
+        item = self.scene.itemAt(event.scenePos())
+        if isinstance(item, Line):
+            return False
+
+        item = Line()
+        self.scene.addItem(item)
+        item.setPos(event.scenePos())
+        return True
 # vi: ts=4 sw=4 et
