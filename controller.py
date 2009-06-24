@@ -81,7 +81,10 @@ class Controller(QObject):
 
 
     def load(self, fileName):
-        pix = QPixmap(fileName)
+        self.setPixmap(QPixmap(fileName))
+
+
+    def setPixmap(self, pix):
         self.pixmapItem.setPixmap(pix)
         self.scene.setSceneRect(QRectF(pix.rect()))
 

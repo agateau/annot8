@@ -7,10 +7,11 @@ from PyQt4.QtGui import *
 from PyKDE4.kdecore import *
 from PyKDE4.kdeui import *
 
+import grab
 from controller import Controller
 
 
-def main():
+def createApplication():
     KCmdLineArgs.init(sys.argv, \
         "annot8", \
         "", \
@@ -19,13 +20,27 @@ def main():
         ki18n("Screenshot annotation tool"))
 
     options = KCmdLineOptions()
+    options.add("grab-window", ki18n("Start with a screenshot of the active window"))
     KCmdLineArgs.addCmdLineOptions(options)
 
     app = KApplication()
-    controller = Controller()
+    return app
 
+
+def main():
+    app = createApplication()
+
+    args = KCmdLineArgs.parsedArgs()
+    if args.isSet("grab-window"):
+        pixmap = grab.grabActiveWindow()
+    else:
+        pixmap = None
+
+    controller = Controller()
     controller.show()
-    if len(sys.argv) == 2:
+    if pixmap:
+        controller.setPixmap(pixmap)
+    elif len(sys.argv) == 2:
         controller.load(sys.argv[1])
     app.exec_()
     return 0
