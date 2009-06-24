@@ -4,12 +4,24 @@ import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from PyKDE4.kdecore import *
+from PyKDE4.kdeui import *
 
 from controller import Controller
 
 
 def main():
-    app = QApplication(sys.argv)
+    KCmdLineArgs.init(sys.argv, \
+        "annot8", \
+        "", \
+        ki18n("Annot8"), \
+        "1.0", \
+        ki18n("Screenshot annotation tool"))
+
+    options = KCmdLineOptions()
+    KCmdLineArgs.addCmdLineOptions(options)
+
+    app = KApplication()
     controller = Controller()
 
     controller.show()
