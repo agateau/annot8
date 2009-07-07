@@ -11,7 +11,11 @@ MARGIN = 10
 ANCHOR_THICKNESS = 20
 
 def computeAnchorDelta(vector, length):
-    angle = math.atan(vector.y() / vector.x()) + math.pi / 2
+    if vector.x() != 0:
+        angle = math.atan(vector.y() / vector.x())
+    else:
+        angle = math.pi / 2
+    angle += math.pi / 2
     return QPointF(length * math.cos(angle), length * math.sin(angle))
 
 class Bubble(QGraphicsPathItem):
@@ -23,7 +27,7 @@ class Bubble(QGraphicsPathItem):
         self.setBrush(QColor.fromHsvF(0, 0, 1., OPACITY))
 
         self.anchorHandle = Handle(self, 0, 0)
-        self.bubbleHandle = Handle(self, ANCHOR_THICKNESS, -ANCHOR_THICKNESS)
+        self.bubbleHandle = Handle(self, -ANCHOR_THICKNESS, ANCHOR_THICKNESS)
         self.anchorHandle.addLinkedItem(self)
         self.bubbleHandle.addLinkedItem(self)
 
@@ -36,12 +40,9 @@ class Bubble(QGraphicsPathItem):
     def adjustSizeFromText(self):
         # Place bubble rect above bubbleHandle
         self.text.adjustSize()
-        rectSize = self.text.document().size()
-        rect = QRectF(
-            self.bubbleHandle.x(), self.bubbleHandle.y() - rectSize.height(),
-            rectSize.width(), rectSize.height()
-            )
-        rect.adjust(-MARGIN, 0, MARGIN, 2*MARGIN)
+        textSize = self.text.document().size()
+        rect = QRectF(self.bubbleHandle.pos(), textSize)
+        rect.adjust(0, 0, 2*MARGIN, 2*MARGIN)
 
         minWidth = 2*MARGIN + ANCHOR_THICKNESS
         if rect.width() < minWidth:
