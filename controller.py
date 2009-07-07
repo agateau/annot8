@@ -15,10 +15,7 @@ class Controller(QObject):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self.window)
 
-        dragMeWidget = DragWidget(self.tr("Drag Me"), self.window)
-        self.ui.mainToolBar.addWidget(dragMeWidget)
-
-        QObject.connect(dragMeWidget, SIGNAL("dragStarted()"), self.slotDragStarted)
+        self.createDragMeWidget()
 
         self.scene = Scene()
         self.ui.view.setScene(self.scene)
@@ -27,18 +24,32 @@ class Controller(QObject):
         self.pixmapItem.setZValue(-1)
         self.scene.addItem(self.pixmapItem)
 
-        QObject.connect(self.ui.actionOpen, SIGNAL("triggered()"), self.open)
-        QObject.connect(self.ui.actionSave, SIGNAL("triggered()"), self.save)
+        self.createActions()
+        self.createToolBox()
 
-        QObject.connect(self.ui.actionDelete, SIGNAL("triggered()"), self.deleteItems)
+        self.window.resize(700, 500)
 
+
+    def createToolBox(self):
         self.toolGroup = QActionGroup(self)
         self.toolGroup.addAction(self.ui.actionSelect)
         self.toolGroup.addAction(self.ui.actionBubble)
         self.toolGroup.addAction(self.ui.actionLine)
         QObject.connect(self.toolGroup, SIGNAL("triggered(QAction*)"), self.slotToolChanged)
 
-        self.window.resize(700, 500)
+
+    def createDragMeWidget(self):
+        dragMeWidget = DragWidget(self.tr("Drag Me"), self.window)
+        self.ui.mainToolBar.addWidget(dragMeWidget)
+
+        QObject.connect(dragMeWidget, SIGNAL("dragStarted()"), self.slotDragStarted)
+
+
+    def createActions(self):
+        QObject.connect(self.ui.actionOpen, SIGNAL("triggered()"), self.open)
+        QObject.connect(self.ui.actionSave, SIGNAL("triggered()"), self.save)
+
+        QObject.connect(self.ui.actionDelete, SIGNAL("triggered()"), self.deleteItems)
 
 
     def slotDragStarted(self):
