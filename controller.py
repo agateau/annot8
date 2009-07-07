@@ -3,7 +3,6 @@ from PyQt4.QtGui import *
 
 from ui_mainwindow import Ui_MainWindow
 from dragwidget import DragWidget
-from scene import Scene
 from bubble import Bubble
 from line import Line
 

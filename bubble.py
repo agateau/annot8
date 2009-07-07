@@ -1,8 +1,6 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from scene import SceneTool
-
 OPACITY = 0.8
 MARGIN = 10
 

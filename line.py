@@ -1,7 +1,6 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from scene import SceneTool
 
 HANDLE_RADIUS = 5
 
