@@ -76,6 +76,8 @@ class Bubble(QGraphicsPathItem):
             self.text.setFocus()
         elif change == QGraphicsItem.ItemSelectedHasChanged:
             selected = value.toBool()
+            if selected:
+                self.text.setFocus()
             self.setHandlesVisible(selected)
         return QGraphicsPathItem.itemChange(self, change, value)
 
