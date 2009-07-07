@@ -50,15 +50,8 @@ class Bubble(QGraphicsPathItem):
         self.setPath(path.simplified())
 
 
-class AddBubbleTool(SceneTool):
-    def mousePressEvent(self, event):
-        item = self.scene.itemAt(event.scenePos())
-        if isinstance(item, Bubble):
-            return False
-
-        bubble = Bubble()
-        self.scene.addItem(bubble)
-        bubble.setPos(event.scenePos())
-        bubble.text.setFocus()
-        return True
+    def itemChange(self, change, value):
+        if change == QGraphicsItem.ItemSceneHasChanged:
+            self.text.setFocus()
+        return QGraphicsPathItem.itemChange(self, change, value)
 # vi: ts=4 sw=4 et

@@ -4,8 +4,8 @@ from PyQt4.QtGui import *
 DRAG_MIN_SIZE = 10
 
 class DragWidget(QLabel):
-    def __init__(self, text, parent):
-        QLabel.__init__(self, text, parent)
+    def __init__(self, parent):
+        QLabel.__init__(self, parent)
         self.setCursor(Qt.OpenHandCursor)
         self.clickPoint = QPoint(0, 0)
         self.setStyleSheet("background-color: palette(base); border: 1px solid palette(mid); border-radius: 6px")
