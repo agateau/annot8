@@ -137,7 +137,7 @@ class Controller(QObject):
         shape = klass()
         self.scene.addItem(shape)
         shape.setPos(pos)
-        view.setFocus()
+        self.ui.view.setFocus()
 
 
     def deleteItems(self):
