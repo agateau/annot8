@@ -21,7 +21,6 @@ def computeAnchorDelta(vector, length):
 class Bubble(QGraphicsPathItem):
     def __init__(self):
         QGraphicsPathItem.__init__(self)
-        self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 
         self.setBrush(QColor.fromHsvF(0, 0, 1., OPACITY))
@@ -30,6 +29,8 @@ class Bubble(QGraphicsPathItem):
         self.bubbleHandle = Handle(self, -ANCHOR_THICKNESS, ANCHOR_THICKNESS)
         self.anchorHandle.addLinkedItem(self)
         self.bubbleHandle.addLinkedItem(self)
+
+        self.setHandlesVisible(False)
 
         self.text = QGraphicsTextItem(self)
         self.text.setTextInteractionFlags(Qt.TextEditorInteraction)
@@ -73,9 +74,21 @@ class Bubble(QGraphicsPathItem):
     def itemChange(self, change, value):
         if change == QGraphicsItem.ItemSceneHasChanged:
             self.text.setFocus()
+        elif change == QGraphicsItem.ItemSelectedHasChanged:
+            selected = value.toBool()
+            self.setHandlesVisible(selected)
         return QGraphicsPathItem.itemChange(self, change, value)
 
 
     def handleMoved(self, handle):
         self.adjustSizeFromText()
+
+
+    def setHandlesVisible(self, visible):
+        if visible:
+            opacity = 1
+        else:
+            opacity = 0
+        self.bubbleHandle.setVisible(visible)
+        self.anchorHandle.setVisible(visible)
 # vi: ts=4 sw=4 et
