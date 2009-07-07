@@ -11,8 +11,8 @@ class Line(QGraphicsItem):
 
         self.handles = [Handle(self, 0, 0), Handle(self, 40, 30)]
         self.handles[1].setZValue(self.handles[0].zValue() + 1)
-
-        self.inited = False
+        for handle in self.handles:
+            handle.addLinkedItem(self)
 
 
     def boundingRect(self):
@@ -20,16 +20,9 @@ class Line(QGraphicsItem):
 
 
     def paint(self, painter, option, widget):
-        if not self.inited:
-            for handle in self.handles:
-                handle.installSceneEventFilter(self)
-            self.inited = True
-
         painter.drawLine(self.handles[0].pos(), self.handles[1].pos())
 
 
-    def sceneEventFilter(self, item, event):
-        if event.type() == QEvent.GraphicsSceneMouseMove:
-            self.prepareGeometryChange()
-        return False
+    def handleMoved(self, handle):
+        self.prepareGeometryChange()
 # vi: ts=4 sw=4 et
