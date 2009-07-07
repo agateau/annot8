@@ -21,6 +21,7 @@ def createApplication():
 
     options = KCmdLineOptions()
     options.add("grab-window", ki18n("Start with a screenshot of the active window"))
+    options.add("+[file]", ki18n("A starting file"))
     KCmdLineArgs.addCmdLineOptions(options)
 
     app = KApplication()
@@ -40,8 +41,9 @@ def main():
     controller.show()
     if pixmap:
         controller.setPixmap(pixmap)
-    elif len(sys.argv) == 2:
-        controller.load(sys.argv[1])
+    elif args.count() > 0:
+        url = args.url(0)
+        controller.load(url.path())
     app.exec_()
     return 0
 
