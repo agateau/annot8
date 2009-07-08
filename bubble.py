@@ -105,6 +105,6 @@ class AddBubbleTool(SceneTool):
         bubble = Bubble()
         self.scene.addItem(bubble)
         bubble.setPos(event.scenePos())
-        bubble.text.setFocus()
+        bubble.setSelected(True)
         return True
 # vi: ts=4 sw=4 et
