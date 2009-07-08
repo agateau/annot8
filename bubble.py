@@ -27,7 +27,9 @@ class Bubble(QGraphicsPathItem):
         self.setBrush(QColor.fromHsvF(0, 0, 1., OPACITY))
 
         self.anchorHandle = Handle(self, 0, 0)
-        self.bubbleHandle = Handle(self, -ANCHOR_THICKNESS, ANCHOR_THICKNESS)
+        # Position the bubble to the right of the anchor so that it can grow
+        # vertically without overflowing the anchor
+        self.bubbleHandle = Handle(self, ANCHOR_THICKNESS, -ANCHOR_THICKNESS)
         self.anchorHandle.addLinkedItem(self)
         self.bubbleHandle.addLinkedItem(self)
 
