@@ -5,10 +5,16 @@ from scene import SceneTool
 
 from handle import Handle
 
+DEFAULT_THICKNESS = 4
+DEFAULT_COLOR = QColor.fromRgbF(1, 0, 0, 0.8)
+
 class Line(QGraphicsLineItem):
     def __init__(self):
         QGraphicsLineItem.__init__(self)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
+        pen = QPen(DEFAULT_COLOR, DEFAULT_THICKNESS)
+        pen.setCapStyle(Qt.RoundCap)
+        self.setPen(pen)
 
         self.handles = [Handle(self, 0, 0), Handle(self, 0, 0)]
         self.handles[1].setZValue(self.handles[0].zValue() + 1)
