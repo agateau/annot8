@@ -121,4 +121,8 @@ class Bubble(QGraphicsPathItem):
     def hoverLeaveEvent(self, event):
         QGraphicsPathItem.hoverLeaveEvent(self, event)
         self.setHandlesVisible(False)
+
+
+    def mouseClickEvent(self, event):
+        self.text.setFocus()
 # vi: ts=4 sw=4 et
