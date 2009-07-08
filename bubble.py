@@ -33,16 +33,16 @@ class Bubble(QGraphicsPathItem):
 
         self.setHandlesVisible(False)
 
-        self.text = QGraphicsTextItem(self)
-        self.text.setTextInteractionFlags(Qt.TextEditorInteraction)
-        QObject.connect(self.text.document(), SIGNAL("contentsChanged()"), \
+        self.textItem = QGraphicsTextItem(self)
+        self.textItem.setTextInteractionFlags(Qt.TextEditorInteraction)
+        QObject.connect(self.textItem.document(), SIGNAL("contentsChanged()"), \
             self.adjustSizeFromText)
-        self.text.setPlainText("")
+        self.textItem.setPlainText("")
 
     def adjustSizeFromText(self):
         # Place bubble rect above bubbleHandle
-        self.text.adjustSize()
-        textSize = self.text.document().size()
+        self.textItem.adjustSize()
+        textSize = self.textItem.document().size()
         rect = QRectF(self.bubbleHandle.pos(), textSize)
         rect.adjust(0, 0, 2*MARGIN, 2*MARGIN)
 
@@ -51,7 +51,7 @@ class Bubble(QGraphicsPathItem):
             rect.setWidth(minWidth)
 
         # Position text in bubble rect
-        self.text.setPos(rect.left() + MARGIN, rect.top() + MARGIN)
+        self.textItem.setPos(rect.left() + MARGIN, rect.top() + MARGIN)
 
         # Compute anchor polygon
         center = rect.center()
@@ -74,11 +74,11 @@ class Bubble(QGraphicsPathItem):
 
     def itemChange(self, change, value):
         if change == QGraphicsItem.ItemSceneHasChanged:
-            self.text.setFocus()
+            self.textItem.setFocus()
         elif change == QGraphicsItem.ItemSelectedHasChanged:
             selected = value.toBool()
             if selected:
-                self.text.setFocus()
+                self.textItem.setFocus()
             self.setHandlesVisible(selected)
         return QGraphicsPathItem.itemChange(self, change, value)
 
