@@ -54,4 +54,5 @@ class AddLineTool(SceneTool):
 
     def mouseReleaseEvent(self, event):
         self.item = None
+        self.scene.emitSelectToolRequested()
 # vi: ts=4 sw=4 et
