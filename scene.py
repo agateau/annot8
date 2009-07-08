@@ -22,6 +22,9 @@ class Scene(QGraphicsScene):
         QGraphicsScene.__init__(self, parent)
         self._tool = None
 
+    def emitSelectToolRequested(self):
+        self.emit(SIGNAL("selectToolRequested()"), ())
+
     def setTool(self, tool):
         self._tool = tool
 

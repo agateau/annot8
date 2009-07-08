@@ -102,5 +102,7 @@ class AddBubbleTool(SceneTool):
         self.scene.addItem(bubble)
         bubble.setPos(event.scenePos())
         bubble.setSelected(True)
+
+        self.scene.emitSelectToolRequested()
         return True
 # vi: ts=4 sw=4 et

@@ -19,6 +19,7 @@ class Controller(QObject):
 
         self.scene = Scene()
         self.ui.view.setScene(self.scene)
+        QObject.connect(self.scene, SIGNAL("selectToolRequested()"), self.slotSelectToolRequested)
 
         self.pixmapItem = QGraphicsPixmapItem()
         self.pixmapItem.setZValue(-1)
@@ -60,6 +61,9 @@ class Controller(QObject):
         drag.setMimeData(mimeData)
         drag.start()
 
+    def slotSelectToolRequested(self):
+        self.ui.actionSelect.setChecked(True)
+        self.slotToolChanged(self.ui.actionSelect)
 
     def show(self):
         self.window.show()
