@@ -88,10 +88,6 @@ class Bubble(QGraphicsPathItem):
 
 
     def setHandlesVisible(self, visible):
-        if visible:
-            opacity = 1
-        else:
-            opacity = 0
         self.bubbleHandle.setVisible(visible)
         self.anchorHandle.setVisible(visible)
 
