@@ -18,10 +18,17 @@ def computeAnchorDelta(vector, length):
     angle += math.pi / 2
     return QPointF(length * math.cos(angle), length * math.sin(angle))
 
+def handleRect(handle):
+    rect = handle.boundingRect()
+    rect.translate(handle.pos())
+    grow = 4
+    return rect.adjusted(-grow, -grow, grow, grow)
+
 class Bubble(QGraphicsPathItem):
     def __init__(self):
         QGraphicsPathItem.__init__(self)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setAcceptHoverEvents(True)
 
         self.setBrush(QColor.fromHsvF(0, 0, 1., OPACITY))
 
@@ -29,8 +36,6 @@ class Bubble(QGraphicsPathItem):
         self.bubbleHandle = Handle(self, -ANCHOR_THICKNESS, ANCHOR_THICKNESS)
         self.anchorHandle.addLinkedItem(self)
         self.bubbleHandle.addLinkedItem(self)
-
-        self.setHandlesVisible(False)
 
         self.text = QGraphicsTextItem(self)
         self.text.setTextInteractionFlags(Qt.TextEditorInteraction)
@@ -78,7 +83,6 @@ class Bubble(QGraphicsPathItem):
             selected = value.toBool()
             if selected:
                 self.text.setFocus()
-            self.setHandlesVisible(selected)
         return QGraphicsPathItem.itemChange(self, change, value)
 
 
@@ -89,4 +93,32 @@ class Bubble(QGraphicsPathItem):
     def setHandlesVisible(self, visible):
         self.bubbleHandle.setVisible(visible)
         self.anchorHandle.setVisible(visible)
+
+
+    def shape(self):
+        path = QGraphicsPathItem.shape(self)
+        path2 = QPainterPath()
+        path2.addRect(handleRect(self.bubbleHandle))
+        path = path.united(path2)
+        path2 = QPainterPath()
+        path2.addRect(handleRect(self.anchorHandle))
+        path = path.united(path2)
+        return path
+
+
+    def boundingRect(self):
+        rect = QGraphicsPathItem.boundingRect(self)
+        rect = rect.united(handleRect(self.bubbleHandle))
+        rect = rect.united(handleRect(self.anchorHandle))
+        return rect
+
+
+    def hoverEnterEvent(self, event):
+        QGraphicsPathItem.hoverEnterEvent(self, event)
+        self.setHandlesVisible(True)
+
+
+    def hoverLeaveEvent(self, event):
+        QGraphicsPathItem.hoverLeaveEvent(self, event)
+        self.setHandlesVisible(False)
 # vi: ts=4 sw=4 et
