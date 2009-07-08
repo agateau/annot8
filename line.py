@@ -5,9 +5,9 @@ from scene import SceneTool
 
 from handle import Handle
 
-class Line(QGraphicsItem):
+class Line(QGraphicsLineItem):
     def __init__(self):
-        QGraphicsItem.__init__(self)
+        QGraphicsLineItem.__init__(self)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 
@@ -16,17 +16,8 @@ class Line(QGraphicsItem):
         for handle in self.handles:
             handle.addLinkedItem(self)
 
-
-    def boundingRect(self):
-        return QRectF(self.handles[0].pos(), self.handles[1].pos())
-
-
-    def paint(self, painter, option, widget):
-        painter.drawLine(self.handles[0].pos(), self.handles[1].pos())
-
-
     def handleMoved(self, handle):
-        self.prepareGeometryChange()
+        self.setLine(QLineF(self.handles[0].pos(), self.handles[1].pos()))
 
 
 class AddLineTool(SceneTool):
