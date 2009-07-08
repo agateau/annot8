@@ -8,16 +8,26 @@ from handle import Handle
 class Line(QGraphicsLineItem):
     def __init__(self):
         QGraphicsLineItem.__init__(self)
-        self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 
         self.handles = [Handle(self, 0, 0), Handle(self, 0, 0)]
         self.handles[1].setZValue(self.handles[0].zValue() + 1)
         for handle in self.handles:
             handle.addLinkedItem(self)
+        self.setHandlesVisible(False)
 
     def handleMoved(self, handle):
         self.setLine(QLineF(self.handles[0].pos(), self.handles[1].pos()))
+
+    def setHandlesVisible(self, visible):
+        for handle in self.handles:
+            handle.setVisible(visible)
+
+    def itemChange(self, change, value):
+        if change == QGraphicsItem.ItemSelectedHasChanged:
+            selected = value.toBool()
+            self.setHandlesVisible(selected)
+        return QGraphicsLineItem.itemChange(self, change, value)
 
 
 class AddLineTool(SceneTool):
@@ -34,6 +44,7 @@ class AddLineTool(SceneTool):
         self.item = Line()
         self.scene.addItem(self.item)
         self.item.setPos(event.scenePos())
+        self.item.setSelected(True)
         return True
 
 
