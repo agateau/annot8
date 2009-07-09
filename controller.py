@@ -16,7 +16,13 @@ class Controller(QObject):
         self.ui.setupUi(self.window)
 
         self.createDragMeWidget()
+        self.createScene()
+        self.createActions()
+        self.createToolBox()
 
+        self.window.resize(700, 500)
+
+    def createScene(self):
         self.scene = Scene()
         self.ui.view.setScene(self.scene)
         QObject.connect(self.scene, SIGNAL("selectToolRequested()"), self.slotSelectToolRequested)
@@ -24,12 +30,6 @@ class Controller(QObject):
         self.pixmapItem = QGraphicsPixmapItem()
         self.pixmapItem.setZValue(-1)
         self.scene.addItem(self.pixmapItem)
-
-        self.createActions()
-        self.createToolBox()
-
-        self.window.resize(700, 500)
-
 
     def createToolBox(self):
         self.toolGroup = QActionGroup(self)
