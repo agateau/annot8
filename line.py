@@ -6,21 +6,25 @@ from scene import SceneTool
 from handle import Handle
 
 DEFAULT_THICKNESS = 4
-DEFAULT_COLOR = QColor.fromRgbF(1, 0, 0, 0.8)
 
 class Line(QGraphicsLineItem):
     def __init__(self):
         QGraphicsLineItem.__init__(self)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
-        pen = QPen(DEFAULT_COLOR, DEFAULT_THICKNESS)
-        pen.setCapStyle(Qt.RoundCap)
-        self.setPen(pen)
+
+        self.color = None
+        self.thickness = DEFAULT_THICKNESS
 
         self.handles = [Handle(self, 0, 0), Handle(self, 0, 0)]
         self.handles[1].setZValue(self.handles[0].zValue() + 1)
         for handle in self.handles:
             handle.addLinkedItem(self)
         self.setHandlesVisible(False)
+
+    def updatePen(self):
+        pen = QPen(self.color, self.thickness)
+        pen.setCapStyle(Qt.RoundCap)
+        self.setPen(pen)
 
     def handleMoved(self, handle):
         self.setLine(QLineF(self.handles[0].pos(), self.handles[1].pos()))
@@ -33,7 +37,13 @@ class Line(QGraphicsLineItem):
         if change == QGraphicsItem.ItemSelectedHasChanged:
             selected = value.toBool()
             self.setHandlesVisible(selected)
+            self.color = self.scene().currentColor()
+            self.updatePen()
         return QGraphicsLineItem.itemChange(self, change, value)
+
+    def setColor(self, color):
+        self.color = color
+        self.updatePen()
 
 
 class AddLineTool(SceneTool):

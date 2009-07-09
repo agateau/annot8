@@ -93,6 +93,9 @@ class Bubble(QGraphicsPathItem):
         self.bubbleHandle.setVisible(visible)
         self.anchorHandle.setVisible(visible)
 
+    def setColor(self, color):
+        pass
+
 
 class AddBubbleTool(SceneTool):
     def mousePressEvent(self, event):

@@ -1,6 +1,9 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from PyKDE4.kdecore import *
+from PyKDE4.kdeui import *
+
 from ui_mainwindow import Ui_MainWindow
 from dragwidget import DragWidget
 from scene import Scene
@@ -37,6 +40,13 @@ class Controller(QObject):
         self.toolGroup.addAction(self.ui.actionBubble)
         self.toolGroup.addAction(self.ui.actionLine)
         QObject.connect(self.toolGroup, SIGNAL("triggered(QAction*)"), self.slotToolChanged)
+
+        self.ui.toolBar.addSeparator()
+
+        self.colorSelector = KColorButton()
+        self.colorSelector.setColor(self.scene.currentColor())
+        QObject.connect(self.colorSelector, SIGNAL("changed(const QColor&)"), self.scene.setCurrentColor)
+        self.ui.toolBar.addWidget(self.colorSelector)
 
 
     def createDragMeWidget(self):
@@ -116,7 +126,6 @@ class Controller(QObject):
         else:
             tool = None
         self.scene.setTool(tool)
-
 
     def deleteItems(self):
         for item in self.scene.selectedItems():
