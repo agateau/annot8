@@ -48,6 +48,13 @@ class Controller(QObject):
         QObject.connect(self.colorSelector, SIGNAL("changed(const QColor&)"), self.scene.setCurrentColor)
         self.ui.toolBar.addWidget(self.colorSelector)
 
+        self.thicknessSelector = QSpinBox()
+        self.thicknessSelector.setMinimum(1)
+        self.thicknessSelector.setMaximum(16)
+        self.thicknessSelector.setValue(self.scene.currentThickness())
+        QObject.connect(self.thicknessSelector, SIGNAL("valueChanged(int)"), self.scene.setCurrentThickness)
+        self.ui.toolBar.addWidget(self.thicknessSelector)
+
 
     def createDragMeWidget(self):
         dragMeWidget = DragWidget(self.tr("Drag Me"), self.window)

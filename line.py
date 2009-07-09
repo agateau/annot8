@@ -5,15 +5,13 @@ from scene import SceneTool
 
 from handle import Handle
 
-DEFAULT_THICKNESS = 4
-
 class Line(QGraphicsLineItem):
     def __init__(self):
         QGraphicsLineItem.__init__(self)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 
         self.color = None
-        self.thickness = DEFAULT_THICKNESS
+        self.thickness = None
 
         self.handles = [Handle(self, 0, 0), Handle(self, 0, 0)]
         self.handles[1].setZValue(self.handles[0].zValue() + 1)
@@ -38,11 +36,16 @@ class Line(QGraphicsLineItem):
             selected = value.toBool()
             self.setHandlesVisible(selected)
             self.color = self.scene().currentColor()
+            self.thickness = self.scene().currentThickness()
             self.updatePen()
         return QGraphicsLineItem.itemChange(self, change, value)
 
     def setColor(self, color):
         self.color = color
+        self.updatePen()
+
+    def setThickness(self, value):
+        self.thickness = value
         self.updatePen()
 
 

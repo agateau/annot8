@@ -17,13 +17,15 @@ class SceneTool(QObject):
         return False
 
 DEFAULT_COLOR = QColor.fromRgbF(1, 0, 0, 0.8)
+DEFAULT_THICKNESS = 4
 
 class Scene(QGraphicsScene):
-    __slots__ = ["_tool", "_color"]
+    __slots__ = ["_tool", "_color", "_thickness"]
     def __init__(self, parent=None):
         QGraphicsScene.__init__(self, parent)
         self._tool = None
         self._color = DEFAULT_COLOR
+        self._thickness = DEFAULT_THICKNESS
 
     def emitSelectToolRequested(self):
         self.emit(SIGNAL("selectToolRequested()"), ())
@@ -51,4 +53,11 @@ class Scene(QGraphicsScene):
         for item in self.selectedItems():
             item.setColor(color)
 
+    def currentThickness(self):
+        return self._thickness
+
+    def setCurrentThickness(self, value):
+        self._thickness = value
+        for item in self.selectedItems():
+            item.setThickness(value)
 # vi: ts=4 sw=4 et tw=0
