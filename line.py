@@ -32,12 +32,13 @@ class Line(QGraphicsLineItem):
             handle.setVisible(visible)
 
     def itemChange(self, change, value):
-        if change == QGraphicsItem.ItemSelectedHasChanged:
-            selected = value.toBool()
-            self.setHandlesVisible(selected)
+        if change == QGraphicsItem.ItemSceneHasChanged:
             self.color = self.scene().currentColor()
             self.thickness = self.scene().currentThickness()
             self.updatePen()
+        elif change == QGraphicsItem.ItemSelectedHasChanged:
+            selected = value.toBool()
+            self.setHandlesVisible(selected)
         return QGraphicsLineItem.itemChange(self, change, value)
 
     def setColor(self, color):
