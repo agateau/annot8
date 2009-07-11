@@ -4,6 +4,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from scene import SceneTool
+from shape import Shape
 from handle import Handle
 
 OPACITY = 0.8
@@ -19,23 +20,39 @@ def computeAnchorDelta(vector, length):
     angle += math.pi / 2
     return QPointF(length * math.cos(angle), length * math.sin(angle))
 
-class Bubble(QGraphicsPathItem):
-    def __init__(self):
+class BubbleItem(QGraphicsPathItem):
+    def __init__(self, shape):
         QGraphicsPathItem.__init__(self)
-        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.shape = shape
 
-        self.setBrush(QColor.fromHsvF(0, 0, 1., OPACITY))
+    def itemChange(self, change, value):
+        if change == QGraphicsItem.ItemSceneHasChanged:
+            self.shape.textItem.setFocus()
+        elif change == QGraphicsItem.ItemSelectedHasChanged:
+            selected = value.toBool()
+            if selected:
+                self.shape.textItem.setFocus()
+            self.shape.setHandlesVisible(selected)
+        return QGraphicsPathItem.itemChange(self, change, value)
 
-        self.anchorHandle = Handle(self, 0, 0)
+
+class BubbleShape(Shape):
+    def __init__(self):
+        Shape.__init__(self, BubbleItem(self))
+        self.item.setFlag(QGraphicsItem.ItemIsSelectable)
+
+        self.item.setBrush(QColor.fromHsvF(0, 0, 1., OPACITY))
+
+        self.anchorHandle = Handle(self.item, 0, 0)
         # Position the bubble to the right of the anchor so that it can grow
         # vertically without overflowing the anchor
-        self.bubbleHandle = Handle(self, ANCHOR_THICKNESS, -ANCHOR_THICKNESS)
+        self.bubbleHandle = Handle(self.item, ANCHOR_THICKNESS, -ANCHOR_THICKNESS)
         self.anchorHandle.addLinkedItem(self)
         self.bubbleHandle.addLinkedItem(self)
 
         self.setHandlesVisible(False)
 
-        self.textItem = QGraphicsTextItem(self)
+        self.textItem = QGraphicsTextItem(self.item)
         self.textItem.setTextInteractionFlags(Qt.TextEditorInteraction)
         QObject.connect(self.textItem.document(), SIGNAL("contentsChanged()"), \
             self.adjustSizeFromText)
@@ -71,42 +88,26 @@ class Bubble(QGraphicsPathItem):
         polygon = anchor.united(QPolygonF(rect))
         path = QPainterPath()
         path.addPolygon(polygon)
-        self.setPath(path)
-
-
-    def itemChange(self, change, value):
-        if change == QGraphicsItem.ItemSceneHasChanged:
-            self.textItem.setFocus()
-        elif change == QGraphicsItem.ItemSelectedHasChanged:
-            selected = value.toBool()
-            if selected:
-                self.textItem.setFocus()
-            self.setHandlesVisible(selected)
-        return QGraphicsPathItem.itemChange(self, change, value)
-
+        self.item.setPath(path)
 
     def handleMoved(self, handle):
         self.adjustSizeFromText()
-
 
     def setHandlesVisible(self, visible):
         self.bubbleHandle.setVisible(visible)
         self.anchorHandle.setVisible(visible)
 
-    def setColor(self, color):
-        pass
-
 
 class AddBubbleTool(SceneTool):
     def mousePressEvent(self, event):
         item = self.scene.itemAt(event.scenePos())
-        if isinstance(item, Bubble):
+        if isinstance(item, BubbleShape):
             return False
 
-        bubble = Bubble()
-        self.scene.addItem(bubble)
-        bubble.setPos(event.scenePos())
-        bubble.setSelected(True)
+        bubble = BubbleShape()
+        self.scene.addShape(bubble)
+        bubble.item.setPos(event.scenePos())
+        bubble.item.setSelected(True)
 
         self.scene.emitSelectToolRequested()
         return True

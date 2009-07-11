@@ -1,6 +1,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from shapesettings import ShapeSettings
 
 class SceneTool(QObject):
     def __init__(self, scene):
@@ -20,12 +21,20 @@ DEFAULT_COLOR = QColor.fromRgbF(1, 0, 0, 0.8)
 DEFAULT_THICKNESS = 4
 
 class Scene(QGraphicsScene):
-    __slots__ = ["_tool", "_color", "_thickness"]
+    __slots__ = ["_tool", "_newShapeSettings"]
     def __init__(self, parent=None):
         QGraphicsScene.__init__(self, parent)
+        self._shapeForItem = {}
         self._tool = None
-        self._color = DEFAULT_COLOR
-        self._thickness = DEFAULT_THICKNESS
+        self._newShapeSettings = ShapeSettings()
+        self._newShapeSettings.pen = QPen(DEFAULT_COLOR, DEFAULT_THICKNESS)
+
+    @property
+    def newShapeSettings(self):
+        return self._newShapeSettings
+
+    def shapeForItem(self, item):
+        return self._shapeForItem[item]
 
     def emitSelectToolRequested(self):
         self.emit(SIGNAL("selectToolRequested()"), ())
@@ -45,19 +54,11 @@ class Scene(QGraphicsScene):
         if not self._tool or not self._tool.mouseReleaseEvent(event):
             QGraphicsScene.mouseReleaseEvent(self, event)
 
-    def currentColor(self):
-        return self._color
+    def addShape(self, shape):
+        self._shapeForItem[shape.item] = shape
+        self.addItem(shape.item)
 
-    def setCurrentColor(self, color):
-        self._color = color
-        for item in self.selectedItems():
-            item.setColor(color)
-
-    def currentThickness(self):
-        return self._thickness
-
-    def setCurrentThickness(self, value):
-        self._thickness = value
-        for item in self.selectedItems():
-            item.setThickness(value)
+    def removeShape(self, shape):
+        self.removeItem(shape.item)
+        del self._shapeForItem[shape.item]
 # vi: ts=4 sw=4 et tw=0

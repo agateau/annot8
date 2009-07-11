@@ -2,79 +2,77 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from scene import SceneTool
-
+from shape import Shape
 from handle import Handle
 
-class Line(QGraphicsLineItem):
-    def __init__(self):
+class LineItem(QGraphicsLineItem):
+    def __init__(self, shape):
         QGraphicsLineItem.__init__(self)
-        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.shape = shape
 
-        self.color = None
-        self.thickness = None
+    def itemChange(self, change, value):
+        if change == QGraphicsItem.ItemSceneHasChanged:
+            self.shape.settings.pen = QPen(self.scene().newShapeSettings.pen)
+            self.shape.updatePen()
+        elif change == QGraphicsItem.ItemSelectedHasChanged:
+            selected = value.toBool()
+            self.shape.setHandlesVisible(selected)
+        return QGraphicsLineItem.itemChange(self, change, value)
 
-        self.handles = [Handle(self, 0, 0), Handle(self, 0, 0)]
+
+class LineShape(Shape):
+    def __init__(self):
+        Shape.__init__(self, LineItem(self))
+        self.item.setFlag(QGraphicsItem.ItemIsSelectable)
+
+        self.handles = [Handle(self.item, 0, 0), Handle(self.item, 0, 0)]
         self.handles[1].setZValue(self.handles[0].zValue() + 1)
         for handle in self.handles:
             handle.addLinkedItem(self)
         self.setHandlesVisible(False)
 
     def updatePen(self):
-        pen = QPen(self.color, self.thickness)
+        pen = QPen(self.settings.pen)
         pen.setCapStyle(Qt.RoundCap)
-        self.setPen(pen)
+        self.item.setPen(pen)
 
     def handleMoved(self, handle):
-        self.setLine(QLineF(self.handles[0].pos(), self.handles[1].pos()))
+        self.item.setLine(QLineF(self.handles[0].pos(), self.handles[1].pos()))
 
     def setHandlesVisible(self, visible):
         for handle in self.handles:
             handle.setVisible(visible)
 
-    def itemChange(self, change, value):
-        if change == QGraphicsItem.ItemSceneHasChanged:
-            self.color = self.scene().currentColor()
-            self.thickness = self.scene().currentThickness()
-            self.updatePen()
-        elif change == QGraphicsItem.ItemSelectedHasChanged:
-            selected = value.toBool()
-            self.setHandlesVisible(selected)
-        return QGraphicsLineItem.itemChange(self, change, value)
-
-    def setColor(self, color):
-        self.color = color
-        self.updatePen()
-
-    def setThickness(self, value):
-        self.thickness = value
+    def settingsChanged(self):
         self.updatePen()
 
 
 class AddLineTool(SceneTool):
     def __init__(self, scene):
         SceneTool.__init__(self, scene)
-        self.item = None
+        self.shape = None
 
 
     def mousePressEvent(self, event):
         item = self.scene.itemAt(event.scenePos())
-        if isinstance(item, Line):
+        if isinstance(item, LineShape):
             return False
 
-        self.item = Line()
-        self.scene.addItem(self.item)
-        self.item.setPos(event.scenePos())
-        self.item.setSelected(True)
+        self.shape = LineShape()
+        self.scene.addShape(self.shape)
+        self.shape.item.setPos(event.scenePos())
+        self.shape.item.setSelected(True)
         return True
 
 
     def mouseMoveEvent(self, event):
-        if self.item:
-            self.item.handles[1].setPos(event.scenePos() - self.item.pos())
-            self.item.update()
+        if self.shape:
+            self.shape.handles[1].setPos(event.scenePos() - self.shape.item.pos())
+            # FIXME: Necessary?
+            self.shape.item.update()
 
 
     def mouseReleaseEvent(self, event):
-        self.item = None
+        self.shape = None
         self.scene.emitSelectToolRequested()
 # vi: ts=4 sw=4 et

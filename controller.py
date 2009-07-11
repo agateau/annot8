@@ -29,6 +29,7 @@ class Controller(QObject):
         self.scene = Scene()
         self.ui.view.setScene(self.scene)
         QObject.connect(self.scene, SIGNAL("selectToolRequested()"), self.slotSelectToolRequested)
+        QObject.connect(self.scene, SIGNAL("selectionChanged()"), self.slotSelectionChanged)
 
         self.pixmapItem = QGraphicsPixmapItem()
         self.pixmapItem.setZValue(-1)
@@ -44,15 +45,15 @@ class Controller(QObject):
         self.ui.toolBar.addSeparator()
 
         self.colorSelector = KColorButton()
-        self.colorSelector.setColor(self.scene.currentColor())
-        QObject.connect(self.colorSelector, SIGNAL("changed(const QColor&)"), self.scene.setCurrentColor)
+        self.colorSelector.setColor(self.scene.newShapeSettings.pen.color())
+        QObject.connect(self.colorSelector, SIGNAL("changed(const QColor&)"), self.slotColorChanged)
         self.ui.toolBar.addWidget(self.colorSelector)
 
         self.thicknessSelector = QSpinBox()
         self.thicknessSelector.setMinimum(1)
         self.thicknessSelector.setMaximum(16)
-        self.thicknessSelector.setValue(self.scene.currentThickness())
-        QObject.connect(self.thicknessSelector, SIGNAL("valueChanged(int)"), self.scene.setCurrentThickness)
+        self.thicknessSelector.setValue(self.scene.newShapeSettings.pen.width())
+        QObject.connect(self.thicknessSelector, SIGNAL("valueChanged(int)"), self.slotThicknessChanged)
         self.ui.toolBar.addWidget(self.thicknessSelector)
 
 
@@ -78,9 +79,50 @@ class Controller(QObject):
         drag.setMimeData(mimeData)
         drag.start()
 
+    def selectedShapes(self):
+        return [self.scene.shapeForItem(x) for x in self.scene.selectedItems()]
+
     def slotSelectToolRequested(self):
         self.ui.actionSelect.setChecked(True)
         self.slotToolChanged(self.ui.actionSelect)
+
+    def slotSelectionChanged(self):
+        shapes = self.selectedShapes()
+        color = None
+        thickness = None
+        if shapes:
+            color = shapes[0].settings.pen.color()
+            thickness = shapes[0].settings.pen.width()
+            for shape in shapes[1:]:
+                pen = shape.settings.pen
+                if color and pen.color() != color:
+                    color = None
+                if thickness and pen.width() != thickness:
+                    thickness = None
+        else:
+            color = self.scene.newShapeSettings.pen.color()
+            thickness = self.scene.newShapeSettings.pen.width()
+
+        if color:
+            self.colorSelector.setColor(color)
+        if thickness:
+            self.thicknessSelector.setValue(thickness)
+
+    def slotColorChanged(self, color):
+        shapes = self.selectedShapes()
+        if shapes:
+            for shape in shapes:
+                shape.settings.setColor(color)
+        else:
+            self.scene.newShapeSettings.setColor(color)
+
+    def slotThicknessChanged(self, thickness):
+        shapes = self.selectedShapes()
+        if shapes:
+            for shape in shapes:
+                shape.settings.setThickness(thickness)
+        else:
+            self.scene.newShapeSettings.setThickness(thickness)
 
     def show(self):
         self.window.show()
@@ -136,5 +178,6 @@ class Controller(QObject):
 
     def deleteItems(self):
         for item in self.scene.selectedItems():
-            self.scene.removeItem(item)
+            shape = self.scene.shapeForItem[item]
+            self.scene.removeShape(shape)
 # vi: ts=4 sw=4 et tw=0
