@@ -178,7 +178,6 @@ class Controller(QObject):
         self.scene.setTool(tool)
 
     def deleteItems(self):
-        for item in self.scene.selectedItems():
-            shape = self.scene.shapeForItem[item]
+        for shape in self.selectedShapes():
             self.scene.removeShape(shape)
 # vi: ts=4 sw=4 et tw=0
