@@ -37,7 +37,7 @@ class Scene(QGraphicsScene):
         return self._shapeForItem[item]
 
     def emitSelectToolRequested(self):
-        self.emit(SIGNAL("selectToolRequested()"), ())
+        self.emit(SIGNAL("selectToolRequested()"))
 
     def setTool(self, tool):
         self._tool = tool
