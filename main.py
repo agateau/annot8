@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# encoding: utf-8
 import sys
 
 from PyQt4.QtCore import *
@@ -12,12 +13,16 @@ from controller import Controller
 
 
 def createApplication():
-    KCmdLineArgs.init(sys.argv, \
+    aboutData = KAboutData(
         "annot8", \
         "", \
         ki18n("Annot8"), \
-        "1.0", \
-        ki18n("Screenshot annotation tool"))
+        "1.0")
+    aboutData.setLicense(KAboutData.License_GPL_V3)
+    aboutData.setShortDescription(ki18n("Screenshot annotation tool"))
+    aboutData.setCopyrightStatement(ki18n("(c) 2009-2011 Aurélien Gâteau"))
+
+    KCmdLineArgs.init(sys.argv, aboutData)
 
     options = KCmdLineOptions()
     options.add("grab-window", ki18n("Start with a screenshot of the active window"))
