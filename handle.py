@@ -9,6 +9,7 @@ class Handle(QGraphicsEllipseItem):
         self.linkedItems = []
         self.setRect(-HANDLE_RADIUS, -HANDLE_RADIUS, 2 * HANDLE_RADIUS, 2 * HANDLE_RADIUS)
         self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setFlag(QGraphicsItem.ItemSendsGeometryChanges)
         self.setPos(x, y)
         self.setBrush(QColor.fromHsvF(0, 0, 1., 0.8))
 
