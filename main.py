@@ -42,7 +42,7 @@ def main():
     else:
         pixmap = None
 
-    controller = Controller()
+    controller = Controller(app)
     controller.show()
     if pixmap:
         controller.setPixmap(pixmap)

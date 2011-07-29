@@ -11,10 +11,10 @@ from bubble import AddBubbleTool
 from line import AddLineTool
 
 class Controller(QObject):
-    def __init__(self):
-        QObject.__init__(self)
+    def __init__(self, parent):
+        QObject.__init__(self, parent)
 
-        self.window = QMainWindow()
+        self.window = KMainWindow()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self.window)
 
@@ -22,11 +22,10 @@ class Controller(QObject):
         self.createScene()
         self.createActions()
         self.createToolBox()
-
         self.window.resize(700, 500)
 
     def createScene(self):
-        self.scene = Scene()
+        self.scene = Scene(self.window)
         self.ui.view.setScene(self.scene)
         QObject.connect(self.scene, SIGNAL("selectToolRequested()"), self.slotSelectToolRequested)
         QObject.connect(self.scene, SIGNAL("selectionChanged()"), self.slotSelectionChanged)
