@@ -149,7 +149,7 @@ class Controller(QObject):
         image.fill(Qt.transparent)
         painter = QPainter(image)
         painter.setRenderHint(QPainter.Antialiasing)
-        self.scene.render(painter, rect, rect)
+        self.scene.render(painter, QRectF(image.rect()), rect)
         painter.end()
         return image
 
