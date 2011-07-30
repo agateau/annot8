@@ -140,7 +140,9 @@ class Controller(QObject):
             return
 
         image = self.imageFromScene()
-        image.save(name, "PNG")
+        ok = image.save(name)
+        if not ok:
+            KMessageBox.error(self.window, self.tr("Failed to save image as %1").arg(name));
 
 
     def imageFromScene(self):
