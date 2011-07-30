@@ -30,33 +30,41 @@ class BubbleItem(QGraphicsPathItem):
             self.shape.textItem.setFocus()
         elif change == QGraphicsItem.ItemSelectedHasChanged:
             selected = value.toBool()
-            if selected:
-                self.shape.textItem.setFocus()
             self.shape.setHandlesVisible(selected)
         return QGraphicsPathItem.itemChange(self, change, value)
 
 
 class BubbleShape(Shape):
     def __init__(self):
+        def initHandle(handle):
+            handle.addLinkedShape(self)
+            handle.setFlag(QGraphicsItem.ItemIsFocusable)
+            handle.setFocusProxy(self.textItem)
+
         Shape.__init__(self, BubbleItem(self))
+        # Item
         self.item.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.item.setFlag(QGraphicsItem.ItemIsFocusable)
 
         self.item.setBrush(QColor.fromHsvF(0, 0, 1., OPACITY))
 
+        # Text item
+        self.textItem = QGraphicsTextItem(self.item)
+        self.textItem.setTextInteractionFlags(Qt.TextEditorInteraction)
+        self.item.setFocusProxy(self.textItem)
+        QObject.connect(self.textItem.document(), SIGNAL("contentsChanged()"), \
+            self.adjustSizeFromText)
+
+        # Handles
         self.anchorHandle = Handle(self.item, 0, 0)
         # Position the bubble to the right of the anchor so that it can grow
         # vertically without overflowing the anchor
         self.bubbleHandle = Handle(self.item, ANCHOR_THICKNESS, -ANCHOR_THICKNESS)
-        self.anchorHandle.addLinkedShape(self)
-        self.bubbleHandle.addLinkedShape(self)
-
+        initHandle(self.anchorHandle)
+        initHandle(self.bubbleHandle)
         self.setHandlesVisible(False)
 
-        self.textItem = QGraphicsTextItem(self.item)
-        self.textItem.setTextInteractionFlags(Qt.TextEditorInteraction)
-        QObject.connect(self.textItem.document(), SIGNAL("contentsChanged()"), \
-            self.adjustSizeFromText)
-        self.textItem.setPlainText("")
+        self.adjustSizeFromText()
 
     def adjustSizeFromText(self):
         # Place bubble rect above bubbleHandle
