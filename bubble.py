@@ -12,13 +12,20 @@ MARGIN = 10
 
 ANCHOR_THICKNESS = 20
 
-def computeAnchorDelta(vector, length):
+def computeAnchorPolygon(center, anchorPos):
+    length = ANCHOR_THICKNESS / 2
+    vector = anchorPos - center
     if vector.x() != 0:
         angle = math.atan(vector.y() / vector.x())
     else:
         angle = math.pi / 2
     angle += math.pi / 2
-    return QPointF(length * math.cos(angle), length * math.sin(angle))
+    delta = QPointF(length * math.cos(angle), length * math.sin(angle))
+
+    return QPolygonF([
+        anchorPos,
+        center + delta,
+        center - delta])
 
 class BubbleItem(QGraphicsPathItem):
     def __init__(self, shape):
@@ -80,22 +87,12 @@ class BubbleShape(Shape):
         # Position text in bubble rect
         self.textItem.setPos(rect.left() + MARGIN, rect.top() + MARGIN)
 
-        # Compute anchor polygon
-        center = rect.center()
-        delta = computeAnchorDelta(center - self.anchorHandle.pos(), ANCHOR_THICKNESS / 2)
-
-        anchor = QPolygonF([
-            self.anchorHandle.pos(),
-            center + delta,
-            center - delta])
-
-        # Avoid blurry borders
-        anchor.translate(0.5, 0.5)
-        rect.translate(0.5, 0.5)
-
-        polygon = anchor.united(QPolygonF(rect))
+        # Compute polygon
+        anchorPolygon = computeAnchorPolygon(rect.center(), self.anchorHandle.pos())
+        polygon = anchorPolygon.united(QPolygonF(rect))
         path = QPainterPath()
         path.addPolygon(polygon)
+        path.translate(0.5, 0.5)
         self.item.setPath(path)
 
     def handleMoved(self, handle):
