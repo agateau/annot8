@@ -12,7 +12,7 @@ MARGIN = 10
 
 ANCHOR_THICKNESS = 20
 
-def computeAnchorPolygon(center, anchorPos):
+def createAnchorPath(center, anchorPos):
     length = ANCHOR_THICKNESS / 2
     vector = anchorPos - center
     if vector.x() != 0:
@@ -22,10 +22,12 @@ def computeAnchorPolygon(center, anchorPos):
     angle += math.pi / 2
     delta = QPointF(length * math.cos(angle), length * math.sin(angle))
 
-    return QPolygonF([
-        anchorPos,
-        center + delta,
-        center - delta])
+    path = QPainterPath()
+    path.moveTo(anchorPos)
+    path.lineTo(center + delta)
+    path.lineTo(center - delta)
+    path.closeSubpath()
+    return path
 
 class BubbleItem(QGraphicsPathItem):
     def __init__(self, shape):
@@ -74,7 +76,7 @@ class BubbleShape(Shape):
         self.adjustSizeFromText()
 
     def adjustSizeFromText(self):
-        # Place bubble rect above bubbleHandle
+        # Compute text rect
         self.textItem.adjustSize()
         textSize = self.textItem.document().size()
         rect = QRectF(self.bubbleHandle.pos(), textSize)
@@ -84,14 +86,13 @@ class BubbleShape(Shape):
         if rect.width() < minWidth:
             rect.setWidth(minWidth)
 
-        # Position text in bubble rect
+        # Position textItem in text rect
         self.textItem.setPos(rect.left() + MARGIN, rect.top() + MARGIN)
 
-        # Compute polygon
-        anchorPolygon = computeAnchorPolygon(rect.center(), self.anchorHandle.pos())
-        polygon = anchorPolygon.united(QPolygonF(rect))
+        # Compute path
         path = QPainterPath()
-        path.addPolygon(polygon)
+        path.addRect(rect)
+        path = path.united(createAnchorPath(rect.center(), self.anchorHandle.pos()))
         path.translate(0.5, 0.5)
         self.item.setPath(path)
 
