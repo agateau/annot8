@@ -151,7 +151,14 @@ class Controller(QObject):
         image.fill(Qt.transparent)
         painter = QPainter(image)
         painter.setRenderHint(QPainter.Antialiasing)
+
+        # Clear selection: we don't want the selection rect to appear in the image
+        selection = self.scene.selectedItems()
+        self.scene.clearSelection()
         self.scene.render(painter, QRectF(image.rect()), rect)
+        for item in selection:
+            item.setSelected(True)
+
         painter.end()
         return image
 
