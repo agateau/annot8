@@ -7,7 +7,7 @@ from scene import SceneTool
 from shape import Shape
 from handle import Handle
 
-OPACITY = 0.8
+COLOR = QColor.fromRgb(255, 255, 154, int(0.8 * 255))
 MARGIN = 10
 
 ANCHOR_THICKNESS = 20
@@ -55,7 +55,7 @@ class BubbleShape(Shape):
         self.item.setFlag(QGraphicsItem.ItemIsSelectable)
         self.item.setFlag(QGraphicsItem.ItemIsFocusable)
 
-        self.item.setBrush(QColor.fromHsvF(0, 0, 1., OPACITY))
+        self.item.setBrush(COLOR)
 
         # Text item
         self.textItem = QGraphicsTextItem(self.item)
