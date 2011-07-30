@@ -17,4 +17,10 @@ class Shape(object):
 
     def settingsChanged(self):
         pass
+
+    def handleMoved(self, handle):
+        # If this shape has been linked to a handle with a call to
+        # Handle.addLinkedShape(), the handle will call this method whenever it
+        # moves.
+        pass
 # vi: ts=4 sw=4 et

@@ -47,8 +47,8 @@ class BubbleShape(Shape):
         # Position the bubble to the right of the anchor so that it can grow
         # vertically without overflowing the anchor
         self.bubbleHandle = Handle(self.item, ANCHOR_THICKNESS, -ANCHOR_THICKNESS)
-        self.anchorHandle.addLinkedItem(self)
-        self.bubbleHandle.addLinkedItem(self)
+        self.anchorHandle.addLinkedShape(self)
+        self.bubbleHandle.addLinkedShape(self)
 
         self.setHandlesVisible(False)
 
