@@ -4,6 +4,8 @@ from PyQt4.QtGui import *
 from PyKDE4.kdecore import *
 from PyKDE4.kdeui import *
 
+import grab
+
 from ui_mainwindow import Ui_MainWindow
 from dragwidget import DragWidget
 from scene import Scene
@@ -65,6 +67,7 @@ class Controller(QObject):
 
     def createActions(self):
         QObject.connect(self.ui.actionOpen, SIGNAL("triggered()"), self.open)
+        QObject.connect(self.ui.actionScreenshot, SIGNAL("triggered()"), self.grabScreenshot)
         QObject.connect(self.ui.actionSave, SIGNAL("triggered()"), self.save)
 
         QObject.connect(self.ui.actionDelete, SIGNAL("triggered()"), self.deleteItems)
@@ -132,6 +135,19 @@ class Controller(QObject):
         if name.isEmpty():
             return
         self.load(name)
+
+
+    def grabScreenshot(self):
+        pos = self.window.pos()
+        self.window.hide()
+        try:
+            pix = grab.showDialog()
+            if pix is not None:
+                self.setPixmap(pix)
+        finally:
+            self.window.show()
+            self.window.move(pos)
+            KWindowSystem.forceActiveWindow(self.window.winId())
 
 
     def save(self):
