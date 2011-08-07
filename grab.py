@@ -1,3 +1,5 @@
+import time
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
@@ -25,8 +27,8 @@ class GrabDialog(KDialog):
 class CountDownDialog(QDialog):
     def __init__(self, delay):
         QDialog.__init__(self)
-        self.setWindowFlags(Qt.ToolTip)
         self.countDown = delay
+        self.setupDialog()
         self.setupLabel()
 
         self.timer = QTimer(self)
@@ -37,18 +39,30 @@ class CountDownDialog(QDialog):
         self.timer.start()
         return QDialog.exec_(self)
 
+    def setupDialog(self):
+        self.setWindowFlags(Qt.ToolTip)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        pal = QPalette()
+        pal.setColor(QPalette.Window, QColor.fromRgbF(0, 0, 0, 0.8))
+        pal.setColor(QPalette.WindowText, Qt.white)
+        self.setPalette(pal)
+
     def setupLabel(self):
         self.label = QLabel(self)
+        self.label.setAutoFillBackground(True)
+        self.label.setAlignment(Qt.AlignCenter)
         layout = QHBoxLayout(self)
+        layout.setMargin(0)
         layout.addWidget(self.label)
 
         font = self.label.font()
-        font.setPixelSize(24)
+        font.setPixelSize(36)
         font.setBold(True)
         self.label.setFont(font)
 
         self.updateCountDownLabel()
-        self.label.adjustSize()
+        size = self.label.sizeHint()
+        self.setFixedSize(size.width() + 24, size.height() + 24)
 
     def updateCountDownLabel(self):
         self.label.setText(str(self.countDown))
@@ -75,6 +89,8 @@ def showDialog():
     dialog = CountDownDialog(dialog.ui.delaySpinBox.value())
     dialog.move(0, 0)
     dialog.exec_()
+    # Give enough time to the dialog to go away (important in composite mode)
+    time.sleep(1)
     return grabActiveWindow()
 
 
