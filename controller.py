@@ -20,9 +20,9 @@ class Controller(QObject):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self.window)
 
+        self.createActions()
         self.createDragMeWidget()
         self.createScene()
-        self.createActions()
         self.createToolBox()
         self.window.resize(700, 500)
 
@@ -66,11 +66,22 @@ class Controller(QObject):
 
 
     def createActions(self):
-        QObject.connect(self.ui.actionOpen, SIGNAL("triggered()"), self.open)
-        QObject.connect(self.ui.actionScreenshot, SIGNAL("triggered()"), self.grabScreenshot)
-        QObject.connect(self.ui.actionSave, SIGNAL("triggered()"), self.save)
+        actionOpen = KStandardAction.open(self.open, self)
+        actionSave = KStandardAction.save(self.save, self)
+        actionScreenshot = KAction(self.tr("Screenshot"), self)
+        actionScreenshot.setIcon(KIcon("camera-photo"))
+        QObject.connect(actionScreenshot, SIGNAL("triggered()"), self.grabScreenshot)
+        actionDelete = KAction(self)
+        actionDelete.setShortcut(Qt.Key_Delete)
+        QObject.connect(actionDelete, SIGNAL("triggered()"), self.deleteItems)
 
-        QObject.connect(self.ui.actionDelete, SIGNAL("triggered()"), self.deleteItems)
+        self.ui.mainToolBar.addAction(actionOpen)
+        self.ui.mainToolBar.addAction(actionSave)
+        self.ui.mainToolBar.addSeparator()
+        self.ui.mainToolBar.addAction(actionScreenshot)
+
+        self.window.addAction(actionDelete)
+
 
 
     def slotDragStarted(self):
