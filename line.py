@@ -28,7 +28,7 @@ class LineShape(Shape):
         self.handles = [Handle(self.item, 0, 0), Handle(self.item, 0, 0)]
         self.handles[1].setZValue(self.handles[0].zValue() + 1)
         for handle in self.handles:
-            handle.addLinkedShape(self)
+            handle.addShape(self)
         self.setHandlesVisible(False)
 
     def updatePen(self):

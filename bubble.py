@@ -46,7 +46,7 @@ class BubbleItem(QGraphicsPathItem):
 class BubbleShape(Shape):
     def __init__(self):
         def initHandle(handle):
-            handle.addLinkedShape(self)
+            handle.addShape(self)
             handle.setFlag(QGraphicsItem.ItemIsFocusable)
             handle.setFocusProxy(self.textItem)
 

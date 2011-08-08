@@ -1,25 +1,30 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from shapeaccessoryitem import ShapeAccessoryItem
+
 HANDLE_RADIUS = 5
 
-class Handle(QGraphicsEllipseItem):
-    def __init__(self, parent, x, y):
+class EllipseItem(QGraphicsEllipseItem):
+    def __init__(self, parent):
         QGraphicsEllipseItem.__init__(self, parent)
-        self.linkedShapes = []
         self.setRect(-HANDLE_RADIUS, -HANDLE_RADIUS, 2 * HANDLE_RADIUS, 2 * HANDLE_RADIUS)
+        self.setBrush(QColor.fromHsvF(0, 0, 1., 0.8))
+
+
+class Handle(ShapeAccessoryItem):
+    def __init__(self, parent, x, y):
+        ShapeAccessoryItem.__init__(self, parent)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemSendsGeometryChanges)
         self.setPos(x, y)
-        self.setBrush(QColor.fromHsvF(0, 0, 1., 0.8))
-
-    def addLinkedShape(self, item):
-        self.linkedShapes.append(item)
+        self.ellipseItem = EllipseItem(self)
+        self.addToGroup(self.ellipseItem)
 
     def itemChange(self, change, value):
         if change == QGraphicsItem.ItemPositionHasChanged:
-            for shape in self.linkedShapes:
+            for shape in self.shapes:
                 shape.handleMoved(self)
-        return QGraphicsEllipseItem.itemChange(self, change, value)
+        return ShapeAccessoryItem.itemChange(self, change, value)
 
 # vi: ts=4 sw=4 et
