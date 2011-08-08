@@ -80,18 +80,29 @@ def grabActiveWindow():
     return QPixmap.grabWindow(wid)
 
 
+def grabWholeScreen():
+    wid = QApplication.desktop().winId()
+    return QPixmap.grabWindow(wid)
+
+
 def showDialog():
     dialog = GrabDialog()
     ret = dialog.exec_()
     if ret != QDialog.Accepted:
         return None
 
-    dialog = CountDownDialog(dialog.ui.delaySpinBox.value())
+    delay = dialog.ui.delaySpinBox.value()
+    wholeScreen = dialog.ui.wholeScreenButton.isChecked()
+
+    dialog = CountDownDialog(delay)
     dialog.move(0, 0)
     dialog.exec_()
     # Give enough time to the dialog to go away (important in composite mode)
     time.sleep(1)
-    return grabActiveWindow()
+    if wholeScreen:
+        return grabWholeScreen()
+    else:
+        return grabActiveWindow()
 
 
 # vi: ts=4 sw=4 et
