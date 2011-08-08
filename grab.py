@@ -69,7 +69,8 @@ class CountDownDialog(QDialog):
 
         self.updateCountDownLabel()
         size = self.label.sizeHint()
-        self.setFixedSize(size.width() + 24, size.height() + 24)
+        extent = max(size.width(), size.height()) + 24
+        self.setFixedSize(extent, extent)
 
     def updateCountDownLabel(self):
         self.label.setText(str(self.countDown))
