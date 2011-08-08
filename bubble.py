@@ -46,6 +46,7 @@ class BubbleItem(QGraphicsPathItem):
 class BubbleShape(Shape):
     def __init__(self):
         def initHandle(handle):
+            self.handles.append(handle)
             handle.addShape(self)
             handle.setFlag(QGraphicsItem.ItemIsFocusable)
             handle.setFocusProxy(self.textItem)
@@ -98,10 +99,6 @@ class BubbleShape(Shape):
 
     def handleMoved(self, handle):
         self.adjustSizeFromText()
-
-    def setHandlesVisible(self, visible):
-        self.bubbleHandle.setVisible(visible)
-        self.anchorHandle.setVisible(visible)
 
 
 class AddBubbleTool(SceneTool):

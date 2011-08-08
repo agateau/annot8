@@ -25,7 +25,8 @@ class LineShape(Shape):
         Shape.__init__(self, LineItem(self))
         self.item.setFlag(QGraphicsItem.ItemIsSelectable)
 
-        self.handles = [Handle(self.item, 0, 0), Handle(self.item, 0, 0)]
+        self.handles.append(Handle(self.item, 0, 0))
+        self.handles.append(Handle(self.item, 0, 0))
         self.handles[1].setZValue(self.handles[0].zValue() + 1)
         for handle in self.handles:
             handle.addShape(self)
@@ -38,10 +39,6 @@ class LineShape(Shape):
 
     def handleMoved(self, handle):
         self.item.setLine(QLineF(self.handles[0].pos(), self.handles[1].pos()))
-
-    def setHandlesVisible(self, visible):
-        for handle in self.handles:
-            handle.setVisible(visible)
 
     def settingsChanged(self):
         self.updatePen()
