@@ -12,6 +12,7 @@ MARGIN = 10
 
 BUBBLE_RADIUS = 5
 ANCHOR_THICKNESS = 15
+MIN_TEXT_WIDTH = ANCHOR_THICKNESS * 3
 
 def createAnchorPath(center, anchorPos):
     length = ANCHOR_THICKNESS / 2
@@ -49,20 +50,15 @@ class BubbleShape(Shape):
         def initHandle(handle):
             self.handles.append(handle)
             handle.addShape(self)
-            handle.setFlag(QGraphicsItem.ItemIsFocusable)
-            handle.setFocusProxy(self.textItem)
 
         Shape.__init__(self, BubbleItem(self))
         # Item
         self.item.setFlag(QGraphicsItem.ItemIsSelectable)
-        self.item.setFlag(QGraphicsItem.ItemIsFocusable)
-
         self.item.setBrush(COLOR)
 
         # Text item
         self.textItem = QGraphicsTextItem(self.item)
         self.textItem.setTextInteractionFlags(Qt.TextEditorInteraction)
-        self.item.setFocusProxy(self.textItem)
         QObject.connect(self.textItem.document(), SIGNAL("contentsChanged()"), \
             self.adjustSizeFromText)
 
@@ -80,13 +76,11 @@ class BubbleShape(Shape):
     def adjustSizeFromText(self):
         # Compute text rect
         self.textItem.adjustSize()
+        if self.textItem.textWidth() < MIN_TEXT_WIDTH:
+            self.textItem.setTextWidth(MIN_TEXT_WIDTH)
         textSize = self.textItem.document().size()
         rect = QRectF(self.bubbleHandle.pos(), textSize)
         rect.adjust(0, 0, 2*MARGIN, 2*MARGIN)
-
-        minWidth = 2*MARGIN + ANCHOR_THICKNESS
-        if rect.width() < minWidth:
-            rect.setWidth(minWidth)
 
         # Position textItem in text rect
         self.textItem.setPos(rect.left() + MARGIN, rect.top() + MARGIN)
@@ -112,6 +106,7 @@ class AddBubbleTool(SceneTool):
         self.scene.addShape(bubble)
         bubble.item.setPos(event.scenePos())
         bubble.item.setSelected(True)
+        bubble.textItem.setFocus()
 
         self.scene.emitSelectToolRequested()
         return True
