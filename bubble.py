@@ -10,7 +10,8 @@ from handle import Handle
 COLOR = QColor.fromRgb(255, 255, 154, int(0.8 * 255))
 MARGIN = 10
 
-ANCHOR_THICKNESS = 20
+BUBBLE_RADIUS = 5
+ANCHOR_THICKNESS = 15
 
 def createAnchorPath(center, anchorPos):
     length = ANCHOR_THICKNESS / 2
@@ -92,7 +93,7 @@ class BubbleShape(Shape):
 
         # Compute path
         path = QPainterPath()
-        path.addRect(rect)
+        path.addRoundedRect(rect, BUBBLE_RADIUS, BUBBLE_RADIUS)
         path = path.united(createAnchorPath(rect.center(), self.anchorHandle.pos()))
         path.translate(0.5, 0.5)
         self.item.setPath(path)
