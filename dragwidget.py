@@ -4,7 +4,7 @@ from PyQt4.QtGui import *
 DRAG_MIN_SIZE = 10
 
 class DragWidget(QLabel):
-    dragStarted=pyqtSignal()
+    dragStarted = pyqtSignal()
 
     def __init__(self, text, parent):
         QLabel.__init__(self, text, parent)
