@@ -14,31 +14,14 @@
    <string>Form</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Grab:</string>
-     </property>
-     <property name="buddy">
-      <cstring>wholeScreenButton</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
+   <item row="1" column="1">
     <widget class="QRadioButton" name="wholeScreenButton">
      <property name="text">
       <string>Whole screen</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QRadioButton" name="activeWindowButton">
-     <property name="text">
-      <string>Active window</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>Delay:</string>
@@ -48,15 +31,40 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QSpinBox" name="delaySpinBox">
      <property name="suffix">
       <string> s</string>
      </property>
     </widget>
    </item>
+   <item row="0" column="1">
+    <widget class="QRadioButton" name="activeWindowButton">
+     <property name="text">
+      <string>Active window</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Grab:</string>
+     </property>
+     <property name="buddy">
+      <cstring>activeWindowButton</cstring>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>activeWindowButton</tabstop>
+  <tabstop>wholeScreenButton</tabstop>
+  <tabstop>delaySpinBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

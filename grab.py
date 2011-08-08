@@ -14,14 +14,21 @@ class GrabDialog(KDialog):
 
         self.pixmap = None
         self.setupDialog()
+        self.restoreConfig()
+
+    def restoreConfig(self):
+        self.ui.delaySpinBox.setValue(5)
 
     def setupDialog(self):
+        margin = 24
+
         self.widget = QWidget(self)
         self.ui = Ui_GrabDialog()
         self.ui.setupUi(self.widget)
         self.setMainWidget(self.widget)
-
-        self.ui.delaySpinBox.setValue(5)
+        self.widget.layout().setContentsMargins(margin, margin / 2, margin, margin)
+        self.showButtonSeparator(True)
+        self.setButtonText(KDialog.Ok, self.tr("Grab"))
 
 
 class CountDownDialog(QDialog):
