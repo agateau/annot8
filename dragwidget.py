@@ -4,6 +4,8 @@ from PyQt4.QtGui import *
 DRAG_MIN_SIZE = 10
 
 class DragWidget(QLabel):
+    dragStarted=pyqtSignal()
+
     def __init__(self, text, parent):
         QLabel.__init__(self, text, parent)
         self.setCursor(Qt.OpenHandCursor)
@@ -21,7 +23,7 @@ class DragWidget(QLabel):
         if self.clickPoint != QPoint(0, 0) \
             and delta.manhattanLength() > DRAG_MIN_SIZE:
             self.clickPoint = event.pos()
-            self.emit(SIGNAL("dragStarted()"), ())
+            self.dragStarted.emit()
 
 
     def mouseReleaseEvent(self, event):
