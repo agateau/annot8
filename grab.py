@@ -36,7 +36,7 @@ class CountDownDialog(QDialog):
         QDialog.__init__(self)
         self.countDown = delay
         self.setupDialog()
-        self.setupLabel()
+        self.setupAnimation()
 
         self.timer = QTimer(self)
         self.timer.setInterval(1000)
@@ -44,43 +44,64 @@ class CountDownDialog(QDialog):
 
     def exec_(self):
         self.timer.start()
+        self.centerDialog()
         return QDialog.exec_(self)
 
     def setupDialog(self):
         self.setWindowFlags(Qt.ToolTip)
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setAutoFillBackground(True)
+        self.setMouseTracking(True)
         pal = QPalette()
         pal.setColor(QPalette.Window, QColor.fromRgbF(0, 0, 0, 0.8))
         pal.setColor(QPalette.WindowText, Qt.white)
         self.setPalette(pal)
 
-    def setupLabel(self):
-        self.label = QLabel(self)
-        self.label.setAutoFillBackground(True)
-        self.label.setAlignment(Qt.AlignCenter)
-        layout = QHBoxLayout(self)
-        layout.setMargin(0)
-        layout.addWidget(self.label)
-
-        font = self.label.font()
+        font = self.font()
         font.setPixelSize(36)
         font.setBold(True)
-        self.label.setFont(font)
+        self.setFont(font)
 
-        self.updateCountDownLabel()
-        size = self.label.sizeHint()
+        fm = QFontMetrics(font)
+        size = fm.size(0, "8")
         extent = max(size.width(), size.height()) + 24
         self.setFixedSize(extent, extent)
 
-    def updateCountDownLabel(self):
-        self.label.setText(str(self.countDown))
+    def setupAnimation(self):
+        self.animation = QPropertyAnimation(self, "pos", self)
+        self.animation.setDirection(QAbstractAnimation.Backward)
+        self.animation.setDuration(200)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.eraseRect(self.rect())
+        painter.drawText(self.rect(), Qt.AlignCenter, str(self.countDown))
+
+    def centerDialog(self):
+        screenRect = QApplication.desktop().screenGeometry()
+        x = (screenRect.width() - self.width()) / 2
+        y = (screenRect.height() - self.height()) / 2
+
+        self.animation.setStartValue(QPoint(x, y))
+        self.animation.setEndValue(QPoint(x + self.width(), y))
+        self.move(x, y)
 
     def decreaseCount(self):
         self.countDown -= 1
         if self.countDown == 0:
             self.accept()
         else:
-            self.updateCountDownLabel()
+            self.update()
+
+    def mouseMoveEvent(self, event):
+        QDialog.mouseMoveEvent(self, event)
+        if self.animation.state() != QAbstractAnimation.Running:
+            direction = self.animation.direction()
+            if direction == QAbstractAnimation.Backward:
+                direction = QAbstractAnimation.Forward
+            else:
+                direction = QAbstractAnimation.Backward
+            self.animation.setDirection(direction)
+            self.animation.start()
 
 
 def grabActiveWindow():
@@ -103,7 +124,6 @@ def showDialog():
     wholeScreen = dialog.ui.wholeScreenButton.isChecked()
 
     dialog = CountDownDialog(delay)
-    dialog.move(0, 0)
     dialog.exec_()
     # Give enough time to the dialog to go away (important in composite mode)
     time.sleep(1)
