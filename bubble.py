@@ -49,7 +49,7 @@ class BubbleShape(Shape):
     def __init__(self):
         def initHandle(handle):
             self.handles.append(handle)
-            handle.addShape(self)
+            QObject.connect(handle, SIGNAL("moved(QGraphicsObject*)"), self.handleMoved)
 
         Shape.__init__(self, BubbleItem(self))
         # Item

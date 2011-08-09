@@ -29,7 +29,7 @@ class LineShape(Shape):
         self.handles.append(Handle(self.item, 0, 0))
         self.handles[1].setZValue(self.handles[0].zValue() + 1)
         for handle in self.handles:
-            handle.addShape(self)
+            QObject.connect(handle, SIGNAL("moved(QGraphicsObject*)"), self.handleMoved)
         self.setHandlesVisible(False)
 
     def updatePen(self):
