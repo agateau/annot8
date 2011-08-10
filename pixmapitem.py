@@ -78,4 +78,8 @@ class PixmapItem(QGraphicsObject):
         self.prepareGeometryChange()
         self._cropRect = QRectF(self._topLeftHandle.pos(), self._bottomRightHandle.pos())
         self.update()
+
+    def setHandlesVisible(self, visible):
+        self._topLeftHandle.setVisible(visible)
+        self._bottomRightHandle.setVisible(visible)
 # vi: ts=4 sw=4 et

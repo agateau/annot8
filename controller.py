@@ -174,20 +174,25 @@ class Controller(QObject):
 
 
     def imageFromScene(self):
+        # Hide elements we don't want to show
+        selection = self.scene.selectedItems()
+        self.scene.clearSelection()
+        self.pixmapItem.setHandlesVisible(False)
+
+        # Render
         rect = self.scene.itemsBoundingRect()
         image = QImage(int(rect.width()), int(rect.height()), QImage.Format_ARGB32)
         image.fill(Qt.transparent)
         painter = QPainter(image)
         painter.setRenderHint(QPainter.Antialiasing)
-
-        # Clear selection: we don't want the selection rect to appear in the image
-        selection = self.scene.selectedItems()
-        self.scene.clearSelection()
         self.scene.render(painter, QRectF(image.rect()), rect)
+        painter.end()
+
+        # Restore hidden elements
         for item in selection:
             item.setSelected(True)
+        self.pixmapItem.setHandlesVisible(True)
 
-        painter.end()
         return image
 
 
