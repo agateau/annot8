@@ -11,6 +11,7 @@ from dragwidget import DragWidget
 from scene import Scene
 from bubble import AddBubbleTool
 from line import AddLineTool
+from pixmapitem import PixmapItem
 
 class Controller(QObject):
     def __init__(self, parent):
@@ -32,7 +33,7 @@ class Controller(QObject):
         QObject.connect(self.scene, SIGNAL("selectToolRequested()"), self.slotSelectToolRequested)
         QObject.connect(self.scene, SIGNAL("selectionChanged()"), self.slotSelectionChanged)
 
-        self.pixmapItem = QGraphicsPixmapItem()
+        self.pixmapItem = PixmapItem()
         self.pixmapItem.setZValue(-1)
         self.scene.addItem(self.pixmapItem)
 
